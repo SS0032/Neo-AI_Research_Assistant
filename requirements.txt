@@ -1,0 +1,14 @@
+streamlit
+python-dotenv
+
+langchain
+langchain-community
+langchain-google-genai
+
+faiss-cpu
+sentence-transformers
+pypdf
+
+duckduckgo-search
+tiktokenstreamlit run app.py
+ddgs
