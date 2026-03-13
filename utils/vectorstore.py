@@ -1,53 +1,37 @@
-import faiss
-import numpy as np
-from models.embeddings import EmbeddingModel
+from langchain_community.vectorstores import Chroma
+from langchain.embeddings import HuggingFaceEmbeddings
 
 
 class VectorStore:
 
     def __init__(self):
 
-        self.embedding_model = EmbeddingModel()
+        self.embedding_model = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
 
-        self.texts = []
-        self.metadatas = []
-
-        self.index = faiss.IndexFlatL2(384)
+        self.db = None
 
     def add_documents(self, documents):
 
-        texts = [doc.page_content for doc in documents]
-        metadata = [doc.metadata for doc in documents]
-
-        embeddings = self.embedding_model.embed_documents(texts)
-
-        embeddings = np.array(embeddings).astype("float32")
-
-        self.index.add(embeddings)
-
-        self.texts.extend(texts)
-        self.metadatas.extend(metadata)
+        self.db = Chroma.from_documents(
+            documents,
+            self.embedding_model
+        )
 
     def similarity_search(self, query, k=3):
 
-        if len(self.texts) == 0:
+        if self.db is None:
             return []
 
-        query_embedding = self.embedding_model.embed_query(query)
-
-        query_embedding = np.array([query_embedding]).astype("float32")
-
-        distances, indices = self.index.search(query_embedding, k)
+        docs = self.db.similarity_search(query, k=k)
 
         results = []
 
-        for i in indices[0]:
-
-            if i >= 0 and i < len(self.texts):
-
-                results.append({
-                    "text": self.texts[i],
-                    "metadata": self.metadatas[i]
-                })
+        for d in docs:
+            results.append({
+                "text": d.page_content,
+                "metadata": d.metadata
+            })
 
         return results

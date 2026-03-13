@@ -6,12 +6,11 @@ langchain-community==0.2.16
 langchain-google-genai==1.0.10
 langchain-text-splitters
 
-faiss-cpu==1.7.4
+chromadb
 sentence-transformers==2.7.0
 pypdf
 
 duckduckgo-search
 ddgs
 tiktoken
-
 protobuf==4.25.3
