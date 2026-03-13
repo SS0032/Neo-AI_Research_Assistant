@@ -13,3 +13,5 @@ pypdf
 duckduckgo-search
 ddgs
 tiktoken
+
+protobuf==4.25.3
